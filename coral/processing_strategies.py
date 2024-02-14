@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import Tuple, NewType, Literal, List
+from typing import List, Literal, NewType, Tuple
 
-from coral.data_preprocessor import DataPreprocessor, BehaviorDataPreprocessor, PhotometryDataPreprocessor
+from coral.data_preprocessor import (BehaviorDataPreprocessor,
+                                     DataPreprocessor,
+                                     PhotometryDataPreprocessor)
 
 Event = NewType('Event', str)
 EventToAlign = NewType('EventToAlign', str)

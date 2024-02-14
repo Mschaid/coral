@@ -1,21 +1,19 @@
+import logging
 import multiprocessing as mp
+from abc import ABC, abstractmethod
+from itertools import product
+from pathlib import Path
+from typing import (Any, Dict, List, Literal, NewType, Optional, Protocol,
+                    Tuple, Union)
+
+import h5py
 import numpy as np
 import pandas as pd
 import polars as pl
-
-import h5py
-from itertools import product
-import logging
 import yaml
 
-from abc import ABC, abstractmethod
-
-from typing import List, Dict, Union, Tuple, Literal, Any, NewType, Protocol, Optional, Union
-
-from coral.experimental_metadata import ExperimentMetaData, MetaDataFactory
 from coral.config_loader import ConfigLoader
-
-from pathlib import Path
+from coral.experimental_metadata import ExperimentMetaData, MetaDataFactory
 
 Event = NewType('Event', str)
 EventToAlign = NewType('EventToAlign', str)

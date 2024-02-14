@@ -1,6 +1,7 @@
 
 from pathlib import Path
-from typing import List, Dict, Union, Tuple, Any, Protocol
+from typing import Any, Dict, List, Protocol, Tuple, Union
+
 import yaml
 
 
