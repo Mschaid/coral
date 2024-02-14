@@ -194,7 +194,7 @@ class BehaviorDataPreprocessor(DataPreprocessor):
         data_df = pd.DataFrame(data)
         joined_df = (data_df
                      .join(meta_df, how='outer')
-                     .fillna(method='ffill')
+                     .ffill()
                      # assign time column
                      .assign(time=np.linspace(-10, 20, 155))
                      )

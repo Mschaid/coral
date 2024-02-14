@@ -1,3 +1,4 @@
+README.md
 setup.py
 coral/__init__.py
 coral/aggregators.py
@@ -5,7 +6,6 @@ coral/batch_data_processors.py
 coral/config_loader.py
 coral/data_preprocessor.py
 coral/experimental_metadata.py
-coral/main_analysis.py
 coral/processing_strategies.py
 coral.egg-info/PKG-INFO
 coral.egg-info/SOURCES.txt
