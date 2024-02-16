@@ -1,8 +1,10 @@
 
-import pandas as pd
 from pathlib import Path
-from typing import List, Dict, Union, Tuple, Any
+from typing import Any, Dict, List, Tuple, Union
+
+import pandas as pd
 import yaml
+
 from coral.config_loader import ConfigLoader
 
 

@@ -1,21 +1,21 @@
 
 import multiprocessing as mp
+from abc import ABC, abstractmethod
+from itertools import product
+from pathlib import Path
+from typing import Any, Dict, List, Literal, NewType, Protocol, Tuple, Union
+
 import numpy as np
 import pandas as pd
 import polars as pl
-from itertools import product
-
 import yaml
 
-from abc import ABC, abstractmethod
-
-from typing import List, Dict, Union, Tuple, Literal, Any, NewType, Protocol
-from coral.experimental_metadata import ExperimentMetaData, MetaDataFactory
 from coral.config_loader import ConfigLoader
-from coral.data_preprocessor import DataPreprocessor, BehaviorDataPreprocessor, PhotometryDataPreprocessor
+from coral.data_preprocessor import (BehaviorDataPreprocessor,
+                                     DataPreprocessor,
+                                     PhotometryDataPreprocessor)
+from coral.experimental_metadata import ExperimentMetaData, MetaDataFactory
 from coral.processing_strategies import ProcessingStrategy
-
-from pathlib import Path
 
 
 class BatchDataPreprocessor(ABC):

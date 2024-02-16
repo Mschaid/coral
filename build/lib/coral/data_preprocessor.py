@@ -1,21 +1,19 @@
+import logging
 import multiprocessing as mp
+from abc import ABC, abstractmethod
+from itertools import product
+from pathlib import Path
+from typing import (Any, Dict, List, Literal, NewType, Optional, Protocol,
+                    Tuple, Union)
+
+import h5py
 import numpy as np
 import pandas as pd
 import polars as pl
-
-import h5py
-from itertools import product
-import logging
 import yaml
 
-from abc import ABC, abstractmethod
-
-from typing import List, Dict, Union, Tuple, Literal, Any, NewType, Protocol, Optional, Union
-
-from coral.experimental_metadata import ExperimentMetaData, MetaDataFactory
 from coral.config_loader import ConfigLoader
-
-from pathlib import Path
+from coral.experimental_metadata import ExperimentMetaData, MetaDataFactory
 
 Event = NewType('Event', str)
 EventToAlign = NewType('EventToAlign', str)
@@ -334,6 +332,7 @@ class PhotometryDataPreprocessor(DataPreprocessor):
     def _roll_and_downsample(self, df, rolling_size, downsample_factor):
         return (
             df
+            .dropna(axis=1)
             .rolling(rolling_size, center=True)
             .mean()
             .reset_index(drop=True)
@@ -372,7 +371,7 @@ class PhotometryDataPreprocessor(DataPreprocessor):
                 pl.col('trial').cast(pl.Int32),
                 pl.col('behavioral_events').cast(pl.Categorical),
                 pl.col('structures').cast(pl.Categorical),
-                pl.col('subject').cast(pl.Categorical),
+                pl.col('subject').cast(pl.Categorical).cast(pl.Int32),
             ])
             .sort(['trial', 'timestamps', 'date', 'subject', 'structures', 'behavioral_events'])
         )

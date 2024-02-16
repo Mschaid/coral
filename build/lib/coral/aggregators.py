@@ -1,12 +1,12 @@
 
-from coral.config_loader import ConfigLoader
+from abc import ABC, abstractmethod
+from pathlib import Path
+from typing import List
 
 import pandas as pd
-from pathlib import Path
 import polars as pl
 
-from abc import ABC, abstractmethod
-from typing import List
+from coral.config_loader import ConfigLoader
 
 
 class AggregationStrategy(ABC):

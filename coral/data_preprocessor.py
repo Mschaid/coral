@@ -332,6 +332,7 @@ class PhotometryDataPreprocessor(DataPreprocessor):
     def _roll_and_downsample(self, df, rolling_size, downsample_factor):
         return (
             df
+            .dropna(axis=1)
             .rolling(rolling_size, center=True)
             .mean()
             .reset_index(drop=True)
@@ -340,11 +341,15 @@ class PhotometryDataPreprocessor(DataPreprocessor):
     #
 
     def _read_and_format_data_from_path(self, path) -> pl.DataFrame:
+        def _reformat_subject(value):
+            return (int(value.replace('_', '')))
+
         pl.enable_string_cache()
         constant_cols_to_drop = ['mean', 'err']
         raw_data = pd.read_hdf(path)
         smoothed_data = self._roll_and_downsample(
             df=raw_data, rolling_size=1000, downsample_factor=100)
+        
         polars_frame = pl.from_pandas(smoothed_data)
         cols_to_rename = [col for col in polars_frame.columns if col not in [
             'timestamps', 'mean', 'err']]
@@ -370,7 +375,8 @@ class PhotometryDataPreprocessor(DataPreprocessor):
                 pl.col('trial').cast(pl.Int32),
                 pl.col('behavioral_events').cast(pl.Categorical),
                 pl.col('structures').cast(pl.Categorical),
-                pl.col('subject').cast(pl.Categorical),
+                pl.col('subject').cast(pl.Categorical).apply(
+                    lambda x: _reformat_subject(x)),
             ])
             .sort(['trial', 'timestamps', 'date', 'subject', 'structures', 'behavioral_events'])
         )
