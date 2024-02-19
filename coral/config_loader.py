@@ -6,6 +6,10 @@ import yaml
 
 
 class ConfigLoader:
+    """
+    class for loading config files and providing access to the data in the config file
+    """
+
     def __init__(self, config_path: str):
         self._config_path = Path(config_path)
         self._config_data: Dict[str, Any] = None

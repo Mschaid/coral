@@ -140,12 +140,14 @@ class ExperimentMetaData:
 
     @property
     def guppy_output_path(self) -> Path:
+        """ returns the output path for the guppy experiment. If there are multiple output paths, it returns the first one."""
         if len(self.guppy_paths['output_paths']) < 2:
             return self.guppy_paths['output_paths'][0]
         return self.guppy_paths['output_paths']
 
 
 class MetaDataFactory:
+    """ This class is used to create ExperimentMetaData objects for each experiment in the data_path directory. It is used by the BatchPhotometryDataPreprocessor class to create a list of ExperimentMetaData objects."""
     def __init__(self, configs: ConfigLoader):
         self.configs = configs
 
