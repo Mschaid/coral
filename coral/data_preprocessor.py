@@ -225,11 +225,6 @@ class PhotometryDataPreprocessor(DataPreprocessor):
         _z_score_data_paths (List[Path]): The paths for z-score data.
         _dff_score_data_paths (List[Path]): The paths for dff score data.
 
-    Methods:
-        _create_structure_event_combos: Creates combinations of structure and event for a given signal correction key.
-        _fetch_signal_correction_paths: Fetches the signal correction paths for a given signal correction key.
-        z_score_data_paths: Getter method for z_score_data_paths property.
-        dff_score_data_paths: Getter method for dff_score_data_paths property.
         """
 
     def __init__(self, metadata: ExperimentMetaData):
@@ -313,23 +308,36 @@ class PhotometryDataPreprocessor(DataPreprocessor):
         return self._dff_score_data_paths
 
     def _categorize_event(self, event: str, events: List[str]) -> str:
+        """
+        internal method to categorize an event based on a list of events
+        """
         for e in events:
             if e in event:
                 return e
 
-    def _categorize_from_stem(self, path, category: Literal['behavioral_events', 'structures']):
+    def _categorize_from_stem(self, path: Path, category: Literal['behavioral_events', 'structures']):
+        """
+        internal method to categorize an event based on a list of events determined from the stem of the path
+        """
         event = path.stem
         result = self._categorize_event(
             event, self.metadata.config_data[category].values())
         return {category: result}
 
     def _experiment_categories(self, path):
-
+        """
+        internal method to categroze an experiment based on the stem of the path
+        implemts the _categorize_from_stem and _categorize_event methods
+        
+        """
         structure_category = self._categorize_from_stem(path, 'structures')
         event_category = self._categorize_from_stem(path, 'behavioral_events')
         return {**structure_category, **event_category}
 
     def _roll_and_downsample(self, df, rolling_size, downsample_factor):
+        """
+        internal method to roll and downsample a dataframe
+        """
         return (
             df
             .dropna(axis=1)
@@ -340,7 +348,11 @@ class PhotometryDataPreprocessor(DataPreprocessor):
         )
     #
 
-    def _read_and_format_data_from_path(self, path) -> pl.DataFrame:
+    def _read_and_format_data_from_path(self, path:Path) -> pl.DataFrame:
+        
+        """
+        internal method to read and format data from a path
+        """
         def _reformat_subject(value):
             return (int(value.replace('_', '')))
 
@@ -383,6 +395,19 @@ class PhotometryDataPreprocessor(DataPreprocessor):
         return data
 
     def process_photometry_data(self, signal_correction: Literal['z_score', 'dff'] = 'z_score', events_to_exclude: List[str] = None, save=True, return_df=False) -> Optional[pl.DataFrame]:
+
+        """
+        Process photometry data and save it to a parquet file.
+
+        Args:
+            signal_correction (Literal['z_score', 'dff'], optional): Type of signal correction to apply. Defaults to 'z_score'.
+            events_to_exclude (List[str], optional): List of events to exclude from the data. Defaults to None.
+            save (bool, optional): Whether to save the processed data to a parquet file. Defaults to True.
+            return_df (bool, optional): Whether to return the processed data as a pandas DataFrame. Defaults to False.
+
+        Returns:
+            Optional[pl.DataFrame]: Processed photometry data as a pandas DataFrame if return_df is True."""
+        
         if not events_to_exclude:
             events_to_exclude = ['lick', 'encoder']
         if signal_correction == 'z_score':
