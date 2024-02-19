@@ -328,7 +328,7 @@ class PhotometryDataPreprocessor(DataPreprocessor):
         """
         internal method to categroze an experiment based on the stem of the path
         implemts the _categorize_from_stem and _categorize_event methods
-        
+
         """
         structure_category = self._categorize_from_stem(path, 'structures')
         event_category = self._categorize_from_stem(path, 'behavioral_events')
@@ -348,8 +348,7 @@ class PhotometryDataPreprocessor(DataPreprocessor):
         )
     #
 
-    def _read_and_format_data_from_path(self, path:Path) -> pl.DataFrame:
-        
+    def _read_and_format_data_from_path(self, path: Path) -> pl.DataFrame:
         """
         internal method to read and format data from a path
         """
@@ -360,8 +359,8 @@ class PhotometryDataPreprocessor(DataPreprocessor):
         constant_cols_to_drop = ['mean', 'err']
         raw_data = pd.read_hdf(path)
         smoothed_data = self._roll_and_downsample(
-            df=raw_data, rolling_size=1000, downsample_factor=100)
-        
+            df=raw_data, rolling_size=500, downsample_factor=100)
+
         polars_frame = pl.from_pandas(smoothed_data)
         cols_to_rename = [col for col in polars_frame.columns if col not in [
             'timestamps', 'mean', 'err']]
@@ -395,7 +394,6 @@ class PhotometryDataPreprocessor(DataPreprocessor):
         return data
 
     def process_photometry_data(self, signal_correction: Literal['z_score', 'dff'] = 'z_score', events_to_exclude: List[str] = None, save=True, return_df=False) -> Optional[pl.DataFrame]:
-
         """
         Process photometry data and save it to a parquet file.
 
@@ -407,7 +405,7 @@ class PhotometryDataPreprocessor(DataPreprocessor):
 
         Returns:
             Optional[pl.DataFrame]: Processed photometry data as a pandas DataFrame if return_df is True."""
-        
+
         if not events_to_exclude:
             events_to_exclude = ['lick', 'encoder']
         if signal_correction == 'z_score':
