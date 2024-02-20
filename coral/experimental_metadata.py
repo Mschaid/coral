@@ -69,17 +69,18 @@ class ExperimentMetaData:
             Dict[str, Any]
                 A dictionary where each key is a string representing the metadata field name, and each value is the corresponding metadata value.
         """
-        data = {}
-        for file in self.main_path.iterdir():
-            if file.is_file() and 'StoresListing.txt' in file.name:
-                with open(file, 'r', encoding='utf-8') as f:
-                    lines = f.readlines()
-                    meta_data_lines = lines[1:5]
-                    key_value_pairs = map(lambda line: line.strip(
-                        '\n').split(': '), meta_data_lines)
-                    data = {k.lower(): v for k, v in key_value_pairs}
-
-        return data
+        try:
+            for file in self.main_path.iterdir():
+                if file.is_file() and 'StoresListing.txt' in file.name:
+                    with open(file, 'r', encoding='utf-8') as f:
+                        lines = f.readlines()
+                        meta_data_lines = lines[1:5]
+                        key_value_pairs = map(lambda line: line.strip(
+                            '\n').split(': '), meta_data_lines)
+                        data = {k.lower(): v for k, v in key_value_pairs}
+                        return data
+        except ValueError as e:
+            print(f'Error reading metadata from {file}: {e}')
 
     @property
     def data(self) -> Dict[str, Any]:
@@ -148,6 +149,7 @@ class ExperimentMetaData:
 
 class MetaDataFactory:
     """ This class is used to create ExperimentMetaData objects for each experiment in the data_path directory. It is used by the BatchPhotometryDataPreprocessor class to create a list of ExperimentMetaData objects."""
+
     def __init__(self, configs: ConfigLoader):
         self.configs = configs
 

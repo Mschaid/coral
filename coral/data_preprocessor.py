@@ -158,6 +158,7 @@ class BehaviorDataPreprocessor(DataPreprocessor):
     def _format_meta_df(self) -> pd.DataFrame:
         """ formats the metadata dictionary into a pandas dataframe"""
         data = self.metadata.data
+
         df = (
             pd.DataFrame(data, index=[0])
             .assign(subject=lambda df_: df_.subject.astype('int64'),
