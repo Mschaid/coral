@@ -1,6 +1,7 @@
 
 from pathlib import Path
 from typing import Any, Dict, List, Tuple, Union
+import datetime
 
 import pandas as pd
 import yaml
@@ -17,9 +18,11 @@ class ExperimentMetaData:
         self._stores_list: Dict[int, pd.DataFrame] = None
         self._data: Dict[str, Any] = None
         self._guppy_paths: Dict[str, Path] = None
-        self._behavioral_events = None
         self._behavior_files = None
         self._stores_list_frame = None
+        self._behavioral_events = None
+        self._reward_dates: List[str, Any] = None
+        self._males: List[int] = None
 
     @property
     def config_path(self) -> Path:
@@ -97,8 +100,20 @@ class ExperimentMetaData:
                 self.configs.config_data['behavioral_events'].keys())
         return self._behavioral_events
 
-    # @property
-    # def photmetry
+    @property
+    def reward_dates(self) -> List[str]:
+        def _string_to_date(date: str) -> datetime.date:
+            return datetime.datetime.strptime(date, '%m-%d-%Y').date()
+        if not self._reward_dates:
+            self._reward_dates = {
+                k: _string_to_date(v) for k, v in self.configs.config_data['reward_dates'].items()}
+        return self._reward_dates
+
+    @property
+    def males(self) -> List[int]:
+        if not self._males:
+            self._males = self.configs.config_data['males']
+        return self._males
 
     def _get_stores_list_paths(self) -> List[Path]:
         """ returns a list of storesList.csv files from the output_paths property."""
