@@ -2,7 +2,7 @@
 from pathlib import Path
 from typing import Any, Dict, List, Tuple, Union
 import datetime
-
+import numpy as np
 import pandas as pd
 import yaml
 
@@ -102,8 +102,8 @@ class ExperimentMetaData:
 
     @property
     def reward_dates(self) -> List[str]:
-        def _string_to_date(date: str) -> datetime.date:
-            return datetime.datetime.strptime(date, '%m-%d-%Y').date()
+        def _string_to_date(date: str) -> np.datetime64:
+            return np.datetime64(datetime.datetime.strptime(date, '%m-%d-%Y'))
         if not self._reward_dates:
             self._reward_dates = {
                 k: _string_to_date(v) for k, v in self.configs.config_data['reward_dates'].items()}

@@ -5,7 +5,7 @@ from itertools import product
 from pathlib import Path
 from typing import (Any, Dict, List, Literal, NewType, Optional, Protocol,
                     Tuple, Union)
-
+import datetime
 import h5py
 import numpy as np
 import pandas as pd
@@ -23,6 +23,15 @@ class DataPreprocessor(Protocol):
 
     def __init__(self, metadata: ExperimentMetaData):
         pass
+
+    def _assign_males(self):
+        raise (NotImplementedError)
+
+    def _assign_reward_dates(self):
+        raise (NotImplementedError)
+
+    def _assign_sex_and_reward_columns(self):
+        raise (NotImplementedError)
 
 
 class BehaviorDataPreprocessor(DataPreprocessor):
@@ -170,6 +179,24 @@ class BehaviorDataPreprocessor(DataPreprocessor):
         )
         return df
 
+    def _assign_males(self, df: pd.DataFrame) -> pd.DataFrame:
+        df_w_males = df.assign(
+            male=lambda df_: df_.subject.isin(self.metadata.males))
+        return df_w_males
+
+    def _assign_sucralose(self, df: pd.DataFrame) -> pd.DataFrame:
+        sucralose_date = self.metadata.reward_dates['sucralose']
+        df_w_sucralose = (
+            df.assign(sucralose=lambda df_: df_.date >= sucralose_date)
+        )
+        return df_w_sucralose
+
+    def _assign_sex_and_reward_columns(self, df):
+        return (
+            df.pipe(self._assign_males)
+            .pipe(self._assign_sucralose)
+        )
+
     def aggregate_processed_results(self, data: Dict[str, np.ndarray], return_df: bool = True, save=True) -> Union[None, pd.DataFrame]:
         """ aggregates the processed results into a pandas dataframe and saves it as a parquet file.
 
@@ -196,6 +223,7 @@ class BehaviorDataPreprocessor(DataPreprocessor):
                      .ffill()
                      # assign time column
                      .assign(time=np.linspace(-10, 20, 155))
+                     .pipe(self._assign_sex_and_reward_columns)
                      )
         # print(joined_df.shape)
         # joined_df = joined_df.set_index('time').
@@ -349,6 +377,22 @@ class PhotometryDataPreprocessor(DataPreprocessor):
         )
     #
 
+    def _assign_males(self, df):
+        return df.with_columns(pl.col('subject').is_in(self.metadata.males))
+
+    def _assign_reward_dates(self, df):
+        new_df = (
+            df
+            .with_columns(
+                pl.when(pl.col('date') >=
+                        self.metadata.reward_dates['sucralose'])
+                .then(True)
+                .otherwise(False)
+                .alias('sucralose'),
+            )
+        )
+        return new_df
+
     def _read_and_format_data_from_path(self, path: Path) -> pl.DataFrame:
         """
         internal method to read and format data from a path
@@ -390,6 +434,8 @@ class PhotometryDataPreprocessor(DataPreprocessor):
                 pl.col('subject').cast(pl.Categorical).apply(
                     lambda x: _reformat_subject(x)),
             ])
+            .pipe(self._assign_males)
+            .pipe(self._assign_reward_dates)
             .sort(['trial', 'timestamps', 'date', 'subject', 'structures', 'behavioral_events'])
         )
         return data
