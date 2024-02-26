@@ -378,7 +378,11 @@ class PhotometryDataPreprocessor(DataPreprocessor):
     #
 
     def _assign_males(self, df):
-        return df.with_columns(pl.col('subject').is_in(self.metadata.males))
+        return (df
+                .with_columns(
+                    pl.col('subject').is_in(self.metadata.males).alias('male')
+                )
+                )
 
     def _assign_reward_dates(self, df):
         new_df = (
