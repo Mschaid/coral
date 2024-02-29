@@ -13,7 +13,7 @@ class AggregationStrategy(ABC):
 
     Attributes:
         configs (ConfigLoader): An instance of ConfigLoader containing configuration settings.
-        
+
     """
 
     def __init__(self, configs: ConfigLoader):
