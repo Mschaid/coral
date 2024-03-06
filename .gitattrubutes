@@ -1,8 +1,8 @@
-   1   │ *.html linguist-vendored
-   2   │ *.ipynb linguist-vendored
-   3   │ *.pbtxt linguist-vendored
-   4   │ *.pb linguist-vendored
-   5   │ *.ipy
-   6   │ *.cython linguist-vendored
-   7   │ *.sh linguist-vendored
-   8   │ *.py linguist-detectable=true
+*.html linguist-vendored
+*.ipynb linguist-vendored
+*.pbtxt linguist-vendored
+*.pb linguist-vendored
+*.ipy
+*.cython linguist-vendored
+*.sh linguist-vendored
+*.py linguist-detectable=true
