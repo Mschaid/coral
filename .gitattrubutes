@@ -2,7 +2,7 @@
 *.ipynb linguist-vendored
 *.pbtxt linguist-vendored
 *.pb linguist-vendored
-*.ipy
+*.ipy linguist-vendored
 *.cython linguist-vendored
 *.sh linguist-vendored
 *.py linguist-detectable=true
