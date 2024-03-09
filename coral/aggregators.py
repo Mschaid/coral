@@ -161,4 +161,3 @@ def aggregate_data(configs: ConfigLoader, aggregation_strategy: AggregationStrat
         aggregation_strategy.save_to_aggregate_dir(data=data)
     else:
         aggregation_strategy.save_to_aggregate_dir()
-# a random comment 
